@@ -1,0 +1,28 @@
+{
+  "name": "megalogger",
+  "version": "0.0.1",
+  "author": "Lyubomir Petrov <lp@mega.co.nz>",
+  "description": "Minimalistic JavaScript logging framework, specifically usable for the browser console",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/meganz/megalogger.gif"
+  },
+  "keywords": [
+    "logging",
+    "logger",
+    "browser",
+    "console.log"
+  ],
+  "main": "index",
+  "dependencies": {
+    "extend": "^2.0.0",
+    "isfunction": "0.0.6"
+  },
+  "devDependencies": {
+    "browserify": "^7.0.0",
+    "chai": "^1.10.0",
+    "clone": "^0.1.19",
+    "mocha": "^2.0.1",
+    "sinon": "^1.12.1"
+  }
+}
