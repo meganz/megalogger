@@ -7,4 +7,4 @@ build-dist:
 	mkdir -p ./dist
 	./node_modules/.bin/browserify --dg false --no-builtins lib/megaLogger -o ./dist/megaLogger.js
 
- .PHONY: test
+ .PHONY: test build-dist
