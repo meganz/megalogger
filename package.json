@@ -5,7 +5,7 @@
   "description": "Minimalistic JavaScript logging framework, specifically usable for the browser console",
   "repository": {
     "type": "git",
-    "url": "https://github.com/meganz/megalogger.gif"
+    "url": "https://github.com/meganz/megalogger.git"
   },
   "keywords": [
     "logging",
