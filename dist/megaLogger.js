@@ -2,8 +2,16 @@
 /**
  * MegaLogger
  */
+;(function (root, factory) {
+  if (typeof define === "function" && define.amd) {
+    define(factory)
+  } else if (typeof module !== 'undefined' && module.exports) {
+    module.exports = factory()
+  } else {
+    root.MegaLogger = factory()
+  }
 
-(function() {
+}(this, function () {
     var extend = require("extend");
     var isfunction = require("isfunction");
     var clone = require("clone");
@@ -257,13 +265,8 @@
         };
     });
 
-    if(isBrowser) {
-        window.MegaLogger = MegaLogger;
-    }
-    if(typeof(module) !== 'undefined') {
-        module.exports = MegaLogger;
-    }
-})();
+    return MegaLogger;
+}));
 
 },{"clone":2,"extend":3,"isfunction":4}],2:[function(require,module,exports){
 'use strict';
