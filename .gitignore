@@ -1,1 +1,7 @@
-node_modules
+# Editor, IDE and dev environment stuff
+*~
+.project
+.settings
+
+# npm things, don't add these to .npmignore
+/node_modules
