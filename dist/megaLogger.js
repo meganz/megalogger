@@ -299,22 +299,22 @@ function objectToString(o) {
 // shim for Node's 'util' package
 // DO NOT REMOVE THIS! It is required for compatibility with EnderJS (http://enderjs.com/).
 var util = {
-    isArray: function (ar) {
-        return Array.isArray(ar) || (typeof ar === 'object' && objectToString(ar) === '[object Array]');
-    },
-    isDate: function (d) {
-        return typeof d === 'object' && objectToString(d) === '[object Date]';
-    },
-    isRegExp: function (re) {
-        return typeof re === 'object' && objectToString(re) === '[object RegExp]';
-    },
-    getRegExpFlags: function (re) {
-        var flags = '';
-        re.global && (flags += 'g');
-        re.ignoreCase && (flags += 'i');
-        re.multiline && (flags += 'm');
-        return flags;
-    }
+  isArray: function (ar) {
+    return Array.isArray(ar) || (typeof ar === 'object' && objectToString(ar) === '[object Array]');
+  },
+  isDate: function (d) {
+    return typeof d === 'object' && objectToString(d) === '[object Date]';
+  },
+  isRegExp: function (re) {
+    return typeof re === 'object' && objectToString(re) === '[object RegExp]';
+  },
+  getRegExpFlags: function (re) {
+    var flags = '';
+    re.global && (flags += 'g');
+    re.ignoreCase && (flags += 'i');
+    re.multiline && (flags += 'm');
+    return flags;
+  }
 };
 
 
@@ -341,88 +341,82 @@ if (typeof module === 'object')
 */
 
 function clone(parent, circular, depth, prototype) {
-    // maintain two arrays for circular references, where corresponding parents
-    // and children have the same index
-    var allParents = [];
-    var allChildren = [];
+  // maintain two arrays for circular references, where corresponding parents
+  // and children have the same index
+  var allParents = [];
+  var allChildren = [];
 
-    var useBuffer = typeof Buffer != 'undefined';
+  var useBuffer = typeof Buffer != 'undefined';
 
-    if (typeof circular == 'undefined') {
-        circular = true;
+  if (typeof circular == 'undefined')
+    circular = true;
+
+  if (typeof depth == 'undefined')
+    depth = Infinity;
+
+  // recurse this function so we don't reset allParents and allChildren
+  function _clone(parent, depth) {
+    // cloning null always returns null
+    if (parent === null)
+      return null;
+
+    if (depth == 0)
+      return parent;
+
+    var child;
+    var proto;
+    if (typeof parent != 'object') {
+      return parent;
     }
 
-    if (typeof depth == 'undefined') {
-        depth = Infinity;
+    if (util.isArray(parent)) {
+      child = [];
+    } else if (util.isRegExp(parent)) {
+      child = new RegExp(parent.source, util.getRegExpFlags(parent));
+      if (parent.lastIndex) child.lastIndex = parent.lastIndex;
+    } else if (util.isDate(parent)) {
+      child = new Date(parent.getTime());
+    } else if (useBuffer && Buffer.isBuffer(parent)) {
+      child = new Buffer(parent.length);
+      parent.copy(child);
+      return child;
+    } else {
+      if (typeof prototype == 'undefined') {
+        proto = Object.getPrototypeOf(parent);
+        child = Object.create(proto);
+      }
+      else {
+        child = Object.create(prototype);
+        proto = prototype;
+      }
     }
 
-    // recurse this function so we don't reset allParents and allChildren
-    function _clone(parent, depth) {
-        // cloning null always returns null
-        if (parent === null) {
-            return null;
-        }
+    if (circular) {
+      var index = allParents.indexOf(parent);
 
-        if (depth == 0) {
-            return parent;
-        }
-
-        var child;
-        var proto;
-        if (typeof parent != 'object') {
-            return parent;
-        }
-
-        if (util.isArray(parent)) {
-            child = [];
-        } else if (util.isRegExp(parent)) {
-            child = new RegExp(parent.source, util.getRegExpFlags(parent));
-            if (parent.lastIndex) {
-                child.lastIndex = parent.lastIndex;
-            }
-        } else if (util.isDate(parent)) {
-            child = new Date(parent.getTime());
-        } else if (useBuffer && Buffer.isBuffer(parent)) {
-            child = new Buffer(parent.length);
-            parent.copy(child);
-            return child;
-        } else {
-            if (typeof prototype == 'undefined') {
-                proto = Object.getPrototypeOf(parent);
-                child = Object.create(proto);
-            }
-            else {
-                child = Object.create(prototype);
-                proto = prototype;
-            }
-        }
-
-        if (circular) {
-            var index = allParents.indexOf(parent);
-
-            if (index != -1) {
-                return allChildren[index];
-            }
-            allParents.push(parent);
-            allChildren.push(child);
-        }
-
-        for (var i in parent) {
-            var attrs;
-            if (proto) {
-                attrs = Object.getOwnPropertyDescriptor(proto, i);
-            }
-
-            if (attrs && attrs.set == null) {
-                continue;
-            }
-            child[i] = _clone(parent[i], depth - 1);
-        }
-
-        return child;
+      if (index != -1) {
+        return allChildren[index];
+      }
+      allParents.push(parent);
+      allChildren.push(child);
     }
 
-    return _clone(parent, depth);
+    for (var i in parent) {
+      var attrs;
+      if (proto) {
+        attrs = Object.getOwnPropertyDescriptor(proto, i);
+      }
+      
+      if (attrs && attrs.set == null) {
+        continue;
+      }
+      child[i] = _clone(parent[i], depth - 1);
+    }
+
+    return child;
+  }
+
+  return _clone(parent, depth);
 }
 
 /**
@@ -433,13 +427,12 @@ function clone(parent, circular, depth, prototype) {
  * works.
  */
 clone.clonePrototype = function(parent) {
-    if (parent === null) {
-        return null;
-    }
+  if (parent === null)
+    return null;
 
-    var c = function () {};
-    c.prototype = parent;
-    return new c();
+  var c = function () {};
+  c.prototype = parent;
+  return new c();
 };
 
 },{}],3:[function(require,module,exports){
@@ -448,94 +441,94 @@ var toString = Object.prototype.toString;
 var undefined;
 
 var isPlainObject = function isPlainObject(obj) {
-    'use strict';
-    if (!obj || toString.call(obj) !== '[object Object]') {
-        return false;
-    }
+	'use strict';
+	if (!obj || toString.call(obj) !== '[object Object]') {
+		return false;
+	}
 
-    var has_own_constructor = hasOwn.call(obj, 'constructor');
-    var has_is_property_of_method = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
-    // Not own constructor property must be Object
-    if (obj.constructor && !has_own_constructor && !has_is_property_of_method) {
-        return false;
-    }
+	var has_own_constructor = hasOwn.call(obj, 'constructor');
+	var has_is_property_of_method = obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
+	// Not own constructor property must be Object
+	if (obj.constructor && !has_own_constructor && !has_is_property_of_method) {
+		return false;
+	}
 
-    // Own properties are enumerated firstly, so to speed up,
-    // if last one is own, then all properties are own.
-    var key;
-    for (key in obj) {
-        // Intentionally left blank.
-    }
+	// Own properties are enumerated firstly, so to speed up,
+	// if last one is own, then all properties are own.
+	var key;
+	for (key in obj) {}
 
-    return key === undefined || hasOwn.call(obj, key);
+	return key === undefined || hasOwn.call(obj, key);
 };
 
-module.exports = function extend() {
-    'use strict';
-    var options, name, src, copy, copyIsArray, clone,
-        target = arguments[0],
-        i = 1,
-        length = arguments.length,
-        deep = false;
+exports = function extend() {
+	'use strict';
+	var options, name, src, copy, copyIsArray, clone,
+		target = arguments[0],
+		i = 1,
+		length = arguments.length,
+		deep = false;
 
-    // Handle a deep copy situation
-    if (typeof target === 'boolean') {
-        deep = target;
-        target = arguments[1] || {};
-        // skip the boolean and the target
-        i = 2;
-    } else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
-        target = {};
-    }
+	// Handle a deep copy situation
+	if (typeof target === 'boolean') {
+		deep = target;
+		target = arguments[1] || {};
+		// skip the boolean and the target
+		i = 2;
+	} else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
+		target = {};
+	}
 
-    for (; i < length; ++i) {
-        options = arguments[i];
-        // Only deal with non-null/undefined values
-        if (options != null) {
-            // Extend the base object
-            for (name in options) {
-                src = target[name];
-                copy = options[name];
+	for (; i < length; ++i) {
+		options = arguments[i];
+		// Only deal with non-null/undefined values
+		if (options != null) {
+			// Extend the base object
+			for (name in options) {
+				src = target[name];
+				copy = options[name];
 
-                // Prevent never-ending loop
-                if (target === copy) {
-                    continue;
-                }
+				// Prevent never-ending loop
+				if (target === copy) {
+					continue;
+				}
 
-                // Recurse if we're merging plain objects or arrays
-                if (deep && copy && (isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
-                    if (copyIsArray) {
-                        copyIsArray = false;
-                        clone = src && Array.isArray(src) ? src : [];
-                    } else {
-                        clone = src && isPlainObject(src) ? src : {};
-                    }
+				// Recurse if we're merging plain objects or arrays
+				if (deep && copy && (isPlainObject(copy) || (copyIsArray = Array.isArray(copy)))) {
+					if (copyIsArray) {
+						copyIsArray = false;
+						clone = src && Array.isArray(src) ? src : [];
+					} else {
+						clone = src && isPlainObject(src) ? src : {};
+					}
 
-                    // Never move original objects, clone them
-                    target[name] = extend(deep, clone, copy);
+					// Never move original objects, clone them
+					target[name] = extend(deep, clone, copy);
 
-                // Don't bring in undefined values
-                } else if (copy !== undefined) {
-                    target[name] = copy;
-                }
-            }
-        }
-    }
+				// Don't bring in undefined values
+				} else if (copy !== undefined) {
+					target[name] = copy;
+				}
+			}
+		}
+	}
 
-    // Return the modified object
-    return target;
+	// Return the modified object
+	return target;
 };
-
+if (typeof module !== 'undefined' && module.exports) {
+	module.exports = exports;
+}
 
 },{}],4:[function(require,module,exports){
 // if (typeof require !== 'undefined') {}
 
 var isFunction = function (functionToCheck) {
-    var getType = {};
-    return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+	var getType = {};
+	return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
 };
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = isFunction;
+	module.exports = isFunction;
 }
 },{}]},{},[1]);
