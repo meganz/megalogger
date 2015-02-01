@@ -35,7 +35,7 @@
      *     Name of the database (a-zA-Z0-9_-).
      * @param options {Object}
      *     See {MegaLogger.DEFAULT_OPTIONS}.
-     * @param parentLogger {string}
+     * @param parentLogger {string|object}
      *     Name of or reference to a parent logger.
      * @returns {MegaLogger}
      * @constructor
@@ -142,7 +142,7 @@
      *     Name of the database (a-zA-Z0-9_-).
      * @param options {Object}
      *     See {MegaLogger.DEFAULT_OPTIONS}.
-     * @param parentLogger {string}
+     * @param parentLogger {string|object}
      *     Name of or reference to a parent logger.
      * @returns {MegaLogger}
      */
