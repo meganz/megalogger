@@ -125,7 +125,7 @@
             } else if(typeof(sessionStorage) !== 'undefined' && localStorage.minLogLevel) {
                 return JSON.parse(localStorage.minLogLevel)
             } else {
-                return MegaLogger.LEVELS.DEBUG;
+                return MegaLogger.LEVELS.INFO;
             }
         },
         /**
