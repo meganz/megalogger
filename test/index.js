@@ -17,10 +17,18 @@ describe('getLogger', function() {
     var logger = MegaLogger.getLogger("parent");
 
     it('child logger of parent', function() {
-        var childLogger = MegaLogger.getLogger('child', undefined, 'parent');
+
+        var childLogger = MegaLogger.getLogger(
+            'child',
+            {
+                'minLogLevel': function() { return MegaLogger.LEVELS.DEBUG; }
+            },
+            'parent'
+        );
         sandbox.spy(console, 'log');
         var message = "Hello, little one.";
         childLogger.log(message);
+        console.error("hm?:", console.log.callCount);
         expect(console.log.callCount).to.eql(1);
         var consoleArgs = console.log.getCall(0).args;
         expect(consoleArgs[0]).to.match(/parent:child - LOG/);
@@ -33,7 +41,8 @@ describe('log', function() {
     var logger = MegaLogger.getLogger("test", {
         onError: function() {
             lastError = arguments;
-        }
+        },
+        'minLogLevel': function() { return MegaLogger.LEVELS.DEBUG; }
     });
 
     it('can log a message', function() {

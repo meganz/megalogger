@@ -192,6 +192,7 @@
         var clr = self.options.levelColors[levelName];
         var logStyle = "color: " + "white" + "; background-color: " +  clr + "; padding-left: 1px; padding-right: 1px;";
 
+
         var args = [
             (isBrowser ? "%c" : "") + self.options.dateFormatter(new Date()) + " - " + self._getLoggerPath() + " - " + levelName,
             (isBrowser ? logStyle : "")
@@ -203,6 +204,8 @@
         }
 
         if(self.options.isEnabled === true || (isfunction(self.options.isEnabled) && self.options.isEnabled())) {
+
+
             var txtMsg = args.join(" ");
             var muted = false;
             self.options.muteList().forEach(function(v) {
@@ -461,7 +464,7 @@ var isPlainObject = function isPlainObject(obj) {
 	return key === undefined || hasOwn.call(obj, key);
 };
 
-exports = function extend() {
+module.exports = function extend() {
 	'use strict';
 	var options, name, src, copy, copyIsArray, clone,
 		target = arguments[0],
@@ -516,9 +519,7 @@ exports = function extend() {
 	// Return the modified object
 	return target;
 };
-if (typeof module !== 'undefined' && module.exports) {
-	module.exports = exports;
-}
+
 
 },{}],4:[function(require,module,exports){
 // if (typeof require !== 'undefined') {}
