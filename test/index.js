@@ -28,7 +28,6 @@ describe('getLogger', function() {
         sandbox.spy(console, 'log');
         var message = "Hello, little one.";
         childLogger.log(message);
-        console.error("hm?:", console.log.callCount);
         expect(console.log.callCount).to.eql(1);
         var consoleArgs = console.log.getCall(0).args;
         expect(consoleArgs[0]).to.match(/parent:child - LOG/);
