@@ -4,11 +4,17 @@
  */
 ;(function (root, factory) {
     if (typeof define === "function" && define.amd) {
-        define(factory)
+        define(factory);
     } else if (typeof module !== 'undefined' && module.exports) {
-        module.exports = factory()
+        module.exports = factory();
+        if(typeof(window) !== 'undefined') {
+            window.MegaLogger = module.exports;
+        }
     } else {
-        root.MegaLogger = factory()
+        root.MegaLogger = factory();
+        if(typeof(window) !== 'undefined') {
+            window.MegaLogger = root.MegaLogger;
+        }
     }
 }(this, function () {
     var extend = require("extend");
