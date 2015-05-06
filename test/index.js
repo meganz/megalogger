@@ -57,3 +57,27 @@ describe('log', function() {
         expect(JSON.parse(lastError[0])[2]).to.eql("hey hey!");
     });
 });
+
+describe('colorsEnabled', function() {
+
+    it('can log a message with colors', function() {
+        var logger = MegaLogger.getLogger("testWithColors", {
+            colorsEnabled: true
+        });
+
+        sandbox.spy(console, 'error');
+        logger.error("hey!");
+        expect(console.error.lastCall.args[0].indexOf("%c")).to.eql(0);
+    });
+
+    it('can log a message without colors', function() {
+        var logger = MegaLogger.getLogger("testWithoutColors", {
+            colorsEnabled: false
+        });
+
+        sandbox.spy(console, 'error');
+        logger.error("hey!");
+
+        expect(console.error.lastCall.args[0].indexOf("%c")).to.eql(-1);
+    });
+});
