@@ -108,6 +108,28 @@ describe('stringSubstitutions', function() {
     });
 });
 
+
+describe('printDate', function() {
+    var MegaLogger = require('../lib/megaLogger');
+
+    it("can omit date printing", function() {
+        var logger = MegaLogger.getLogger("printDate1");
+        var logger2 = MegaLogger.getLogger("printDate2", {
+            printDate: false
+        });
+        sandbox.spy(console, 'info');
+        logger.info('Hello, world!');
+        expect(console.info.callCount).to.eql(1);
+        var consoleArgs = console.info.getCall(0).args;
+        var withDate = String(consoleArgs[0]).slice(0);
+        logger2.info('Hello, world!');
+        expect(console.info.callCount).to.eql(2);
+        consoleArgs = console.info.getCall(1).args;
+        var withoutDate = String(consoleArgs[0]).slice(0);
+        expect(withDate.substr(withDate.indexOf(" - ")+3).replace('printDate1','printDate2')).to.eql(withoutDate);
+    });
+});
+
 // describe('', function() {
     // var MegaLogger = require('../lib/megaLogger');
 // });
