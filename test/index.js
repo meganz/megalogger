@@ -46,11 +46,18 @@ describe('log', function() {
         },
         'minLogLevel': function() { return MegaLogger.LEVELS.DEBUG; }
     });
+    var logger2 = MegaLogger.getLogger("isEnabled", { isEnabled: false });
 
     it('can log a message', function() {
         sandbox.spy(console, 'log');
         logger.log("hey!");
         expect(console.log.callCount).to.eql(1);
+    });
+
+    it('can disable logging', function() {
+        sandbox.spy(console, 'info');
+        logger2.info("heya!");
+        expect(console.info.callCount).to.eql(0);
     });
 
     it('can log a message to call callbacks', function() {

@@ -15,9 +15,6 @@
   ],
   "main": "index",
   "dependencies": {
-    "extend": "^2.0.0",
-    "isfunction": "0.0.6",
-    "clone": "^0.1.19"
   },
   "devDependencies": {
     "browserify": "^7.0.0",
