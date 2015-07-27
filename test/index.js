@@ -32,7 +32,7 @@ describe('getLogger', function() {
         expect(console.log.callCount).to.eql(1);
         var consoleArgs = console.log.getCall(0).args;
         expect(consoleArgs[0]).to.match(/parent:child - LOG/);
-        expect(consoleArgs[2]).to.eql(message);
+        expect(consoleArgs[0].substr(-message.length)).to.eql(message);
     });
 });
 
@@ -46,6 +46,7 @@ describe('log', function() {
         },
         'minLogLevel': function() { return MegaLogger.LEVELS.DEBUG; }
     });
+    var logger2 = MegaLogger.getLogger("isEnabled", { isEnabled: false });
 
     it('can log a message', function() {
         sandbox.spy(console, 'log');
@@ -53,11 +54,18 @@ describe('log', function() {
         expect(console.log.callCount).to.eql(1);
     });
 
+    it('can disable logging', function() {
+        sandbox.spy(console, 'info');
+        logger2.info("heya!");
+        expect(console.info.callCount).to.eql(0);
+    });
+
     it('can log a message to call callbacks', function() {
+        var message = "hey hey!";
         sandbox.spy(console, 'error');
-        logger.error("hey hey!");
+        logger.error(message);
         expect(console.error.callCount).to.eql(1);
-        expect(JSON.parse(lastError[0])[2]).to.eql("hey hey!");
+        expect(JSON.parse(lastError[0])[0].substr(-message.length)).to.eql(message);
     });
 });
 
@@ -86,31 +94,42 @@ describe('colorsEnabled', function() {
     });
 });
 
-describe('colorsEnabledDependingOnTheEnvironment', function() {
+describe('stringSubstitutions', function() {
     var MegaLogger = require('../lib/megaLogger');
 
-
-    var userAgents = {
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/534.34 (KHTML, like Gecko) PhantomJS/1.9.8 Safari/534.34': false,
-        'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)': false,
-        'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko': false,
-        'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36 Edge/12.0': false,
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:37.0) Gecko/20100101 Firefox/37.0': true,
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36': true
-    };
-
-    Object.keys(userAgents).forEach(function(k) {
-        var v = userAgents[k];
-        if(typeof(window) === 'undefined') {
-            window = {'fakeWindow': true, 'navigator': {'userAgent': ''}};
-        }
-
-        var testTitle = 'agent: ' + k + ", have support for console formatting: " + v;
-
-        it(testTitle, function() {
-            window.navigator.userAgent = k;
-            expect(MegaLogger._environmentHaveSupportForColors()).to.eql(v, testTitle);
-        });
+    it("can handle string substitutions", function() {
+        var logger = MegaLogger.getLogger("strSubTest");
+        sandbox.spy(console, 'info');
+        var message = 'Congrats Bob, you got 250 points';
+        logger.info('Congrats %s, you got %d points', "Bob", 250);
+        expect(console.info.callCount).to.eql(1);
+        var consoleArgs = console.info.getCall(0).args;
+        expect(consoleArgs[0].substr(-message.length)).to.eql(message);
     });
-
 });
+
+
+describe('printDate', function() {
+    var MegaLogger = require('../lib/megaLogger');
+
+    it("can omit date printing", function() {
+        var logger = MegaLogger.getLogger("printDate1");
+        var logger2 = MegaLogger.getLogger("printDate2", {
+            printDate: false
+        });
+        sandbox.spy(console, 'info');
+        logger.info('Hello, world!');
+        expect(console.info.callCount).to.eql(1);
+        var consoleArgs = console.info.getCall(0).args;
+        var withDate = String(consoleArgs[0]).slice(0);
+        logger2.info('Hello, world!');
+        expect(console.info.callCount).to.eql(2);
+        consoleArgs = console.info.getCall(1).args;
+        var withoutDate = String(consoleArgs[0]).slice(0);
+        expect(withDate.substr(withDate.indexOf(" - ")+3).replace('printDate1','printDate2')).to.eql(withoutDate);
+    });
+});
+
+// describe('', function() {
+    // var MegaLogger = require('../lib/megaLogger');
+// });
