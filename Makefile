@@ -11,6 +11,6 @@ test:
 build-dist:
 	rm -rf ./dist/megaLogger.js
 	mkdir -p ./dist
-	./node_modules/.bin/browserify --dg false --no-builtins lib/megaLogger -o ./dist/megaLogger.js
+	cp ./lib/megaLogger.js ./dist/megaLogger.js
 
  .PHONY: test build-dist
