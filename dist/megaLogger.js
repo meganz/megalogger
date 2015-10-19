@@ -31,10 +31,10 @@
      */
     var getStorageCacheValue = function(k) {
         if (!storageCache.hasOwnProperty(k)) {
-            if (typeof(sessionStorage[k]) !== 'undefined') {
+            if (typeof(sessionStorage) !== 'undefined' && k in sessionStorage) {
                 storageCache[k] = sessionStorage[k];
             }
-            else if (typeof(localStorage[k]) !== 'undefined') {
+            else if (typeof(localStorage) !== 'undefined' && k in localStorage) {
                 storageCache[k] = localStorage[k];
             }
             else {
