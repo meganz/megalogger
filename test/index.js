@@ -4,6 +4,12 @@ var sinon = require('sinon');
 //Create/restore Sinon stub/spy/mock sandboxes.
 var sandbox = null;
 
+// needs to be initialised here, since MegaLogger would cache it after the first call to MegaLogger...
+global.localStorage = {
+    'minLogLevel': 0,
+    'd': 1
+};
+
 beforeEach(function() {
     sandbox = sinon.sandbox.create();
 });
@@ -39,10 +45,10 @@ describe('getLogger', function() {
 describe('log', function() {
     var MegaLogger = require('../lib/megaLogger');
 
-    var lastError = null;
+    var lastCritical = null;
     var logger = MegaLogger.getLogger("test", {
-        onError: function() {
-            lastError = arguments;
+        onCritical: function() {
+            lastCritical = arguments;
         },
         'minLogLevel': function() { return MegaLogger.LEVELS.DEBUG; }
     });
@@ -63,9 +69,9 @@ describe('log', function() {
     it('can log a message to call callbacks', function() {
         var message = "hey hey!";
         sandbox.spy(console, 'error');
-        logger.error(message);
+        logger.critical(message);
         expect(console.error.callCount).to.eql(1);
-        expect(JSON.parse(lastError[0])[0].substr(-message.length)).to.eql(message);
+        expect(JSON.parse(lastCritical[0])[0].substr(-message.length)).to.eql(message);
     });
 });
 
